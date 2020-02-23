@@ -1,0 +1,32 @@
+---
+- hosts: tag_role_database
+  remote_user: ec2-user
+  tasks:
+  - name: upgrade all packages
+    yum:
+      name: '*'
+      state: latest
+    become: true
+  - name: ensure a list of packages installed
+    yum:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+      - gcc
+      - pcre-devel
+      - zlib-devel
+      - amazon-linux-extras
+    become: true
+
+  - name: Add extras repository
+    shell: yum-config-manager --enable extras
+    become: true
+  
+  - name: Install nginx via amazon-linux-extras
+    shell: "amazon-linux-extras install nginx1.12 -y"
+    become: true
+
+  - name: Starting nginx service
+    service: name=nginx state=started
+    become: true

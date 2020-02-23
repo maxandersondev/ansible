@@ -1,0 +1,16 @@
+---
+- hosts: all
+  tasks:
+  - name: Enxure the folder /tmp/iprout2 is present
+    file:
+      dest: '/tmp/iproute2'
+      state: directory
+    become: true
+  - name: copy files that start with rt to the tmp folder
+    copy:
+      src: '{{ item }}'
+      dest: '/tmp/iproute2'
+      remote_src: true
+    become: true
+    with_fileglob:
+      - '/etc/iproute2/rt_*'
